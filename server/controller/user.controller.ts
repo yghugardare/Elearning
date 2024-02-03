@@ -7,6 +7,7 @@ import jwt, { Secret } from "jsonwebtoken";
 import path from "path";
 import ejs from "ejs";
 import sendMail from "../utils/sendMail";
+import { sendToken } from "../utils/jwt";
 
 // register user
 interface IRegistrationBody {
@@ -111,7 +112,7 @@ export const activateUser = CatchAsyncError(
       const newUser: { user: IUser; activationCode: string } = jwt.verify(
         activation_token,
         process.env.ACTIVATION_SECRET as string
-      ) as { user: IUser; activationCode: string } ;
+      ) as { user: IUser; activationCode: string };
 
       // check activation code of the new user
       if (newUser.activationCode !== activation_code) {
@@ -146,8 +147,57 @@ export const activateUser = CatchAsyncError(
   }
 );
 
-// go to user.route.ts
+// login user
+interface ILoginRequest {
+  email: string;
+  password: string;
+}
+export const loginUser = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // fetch email and passowrd from client
+      const { email, password } = req.body as ILoginRequest;
+      // check for both
+      if (!email || !password) {
+        return next(new ErrorHandler("Please enter email or password", 400));
+      }
+      // fetch user from db based on the email
+      const user = await userModel.findOne({ email }).select("+password");
 
+      // if user is not fetched , the email or passwors is invalid
+      if (!user) {
+        return next(new ErrorHandler("Invalid email or password", 400));
+      }
+      // check password
+      const isPasswordMatch = await user.comparePassword(password);
+      // handle case for wrong password
+      if (!isPasswordMatch) {
+        return next(new ErrorHandler("Invalid email or password", 400));
+      }
+      //send the token to cookie and as response to the client and store session in redis
+      sendToken(user, 200, res);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+// logout user
+export const logoutUser = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // override the existing key in our cookies to empty value
+      // to end session
+      res.cookie("access_token", "", { maxAge: 1 });
+      res.cookie("refresh_token", "", { maxAge: 1 });
+      res.status(200).json({
+        success: true,
+        message: "Logged Out Successfully",
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
 /*
 export const registrationUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -196,7 +246,7 @@ export const registrationUser = CatchAsyncError(
     }
   }
 );
----till here
+
 interface IActivationToken {
   token: string;
   activationCode: string;
@@ -261,7 +311,7 @@ export const activateUser = CatchAsyncError(
     }
   }
 );
---- till hwere
+---- start here
 // Login user
 interface ILoginRequest {
   email: string;
@@ -287,12 +337,12 @@ export const loginUser = CatchAsyncError(
       if (!isPasswordMatch) {
         return next(new ErrorHandler("Invalid email or password", 400));
       }
-
-      sendToken(user, 200, res);
+      // GO To utils and create jwt.ts
+      sendToken(user, 200, res);  // import this
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
-  }
+  } // to user.route.ts
 );
 
 // logout user
@@ -301,8 +351,8 @@ export const logoutUser = CatchAsyncError(
     try {
       res.cookie("access_token", "", { maxAge: 1 });
       res.cookie("refresh_token", "", { maxAge: 1 });
-      const userId = req.user?._id || "";
-      redis.del(userId);
+      const userId = req.user?._id || ""; // NO NEED
+      redis.del(userId);  //NO NEED
       res.status(200).json({
         success: true,
         message: "Logged out successfully",
@@ -311,8 +361,9 @@ export const logoutUser = CatchAsyncError(
       return next(new ErrorHandler(error.message, 400));
     }
   }
-);
+ );
 
+--- till here
 // update access token
 export const updateAccessToken = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
