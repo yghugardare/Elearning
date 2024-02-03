@@ -205,6 +205,31 @@ export const logoutUser = CatchAsyncError(
     }
   }
 );
+
+// update access token
+export const updateAccessToken = CatchAsyncError(
+  async (req:Request,res:Response,next:NextFunction) => {
+    try {
+      // get refresh token from string
+        const refresh_token = req.cookies.refresh_token as string;
+      // verify and get decoded token
+      const decoded = jwt.verify(
+        refresh_token,process.env.REFRESH_TOKEN as string
+      )
+      // handle case
+      const message = "Could not refresh token";
+      if(!decoded){
+        return next(new ErrorHandler(message,400));
+      }
+      // get the session from redis
+      // const session = await redis.get(decoded.id as string)
+    } catch (error:any) {
+      return next(new ErrorHandler(error.message,400));
+    }
+  }
+)
+
+
 /*
 
 export const registrationUser = CatchAsyncError(
@@ -371,8 +396,8 @@ export const logoutUser = CatchAsyncError(
   }
  );
 
----  here
-// update access token
+--- start  here
+// update access token, which will simply update our access token
 export const updateAccessToken = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -413,19 +438,19 @@ export const updateAccessToken = CatchAsyncError(
       );
 
       req.user = user;
-
+        -- go to jwt.ts and add 60*60*1000, cut and paste it outside so we can export it
       res.cookie("access_token", accessToken, accessTokenOptions);
       res.cookie("refresh_token", refreshToken, refreshTokenOptions);
+      res.status(200) -- 11:10 go to user.route.ts
+      // await redis.set(user._id, JSON.stringify(user), "EX", 604800); // 7days
 
-      await redis.set(user._id, JSON.stringify(user), "EX", 604800); // 7days
-
-      return next();
+      // return next();
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
   }
 );
-
+-- here from service
 // get user info
 export const getUserInfo = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -436,8 +461,9 @@ export const getUserInfo = CatchAsyncError(
       return next(new ErrorHandler(error.message, 400));
     }
   }
-);
+); // go to route
 
+// here from routes
 interface ISocialAuthBody {
   email: string;
   name: string;
@@ -452,6 +478,7 @@ export const socialAuth = CatchAsyncError(
       const user = await userModel.findOne({ email });
       if (!user) {
         const newUser = await userModel.create({ email, name, avatar });
+        // create new user
         sendToken(newUser, 200, res);
       } else {
         sendToken(user, 200, res);
@@ -459,8 +486,8 @@ export const socialAuth = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
-  }
-);
+  } -- we are validating everything from frontend nextAuth
+); -- go to route
 
 // update user info
 interface IUpdateUserInfo {
