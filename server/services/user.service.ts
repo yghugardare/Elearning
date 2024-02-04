@@ -1,3 +1,18 @@
+import { Response } from "express";
+import userModel from "../models/user.model";
+
+export const getUserById = async (id: string, res: Response) => {
+  // get user from db
+  // console.log("id-",id)
+  const user = await userModel.findById(id);
+  // console.log(user)
+  // return user as resonse
+  res.status(201).json({
+    success: true,
+    user,
+  });
+};
+
 /*
 import { Response } from "express";
 import { redis } from "../utils/redis";

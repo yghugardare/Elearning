@@ -13,6 +13,7 @@ import {
   sendToken,
 } from "../utils/jwt";
 import { redis } from "../utils/redis";
+import { getUserById } from "../services/user.service";
 
 // register user
 interface IRegistrationBody {
@@ -214,23 +215,23 @@ export const logoutUser = CatchAsyncError(
 export const updateAccessToken = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log("getting refresh token")
+      console.log("getting refresh token");
       // get refresh token from string
       const refresh_token = req.cookies.refresh_token as string;
-      console.log("got refresh token- ",refresh_token)
+      console.log("got refresh token- ", refresh_token);
       // verify and get decoded token
-      console.log("verifying refresh token")
+      console.log("verifying refresh token");
       const decoded = jwt.verify(
         refresh_token,
         process.env.REFRESH_TOKEN as string
       ) as JwtPayload;
       // handle case
-      console.log("this done")
+      console.log("this done");
       const message = "Could not refresh token";
       if (!decoded) {
         return next(new ErrorHandler(message, 400));
       }
-      console.log("verified refressh token")
+      console.log("verified refressh token");
       // get the session from redis
       const session = await redis.get(decoded.id as string);
       if (!session) {
@@ -267,6 +268,46 @@ export const updateAccessToken = CatchAsyncError(
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+// get user info
+export const getUserInfo = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // get user id from user
+      const userId = req.user?._id;
+      getUserById(userId, res);
+    } catch (error: any) {
+      throw next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+// social authentication
+interface ISocialAuthBody {
+  email: string;
+  name: string;
+  avatar: string;
+}
+// social auth
+export const socialAuth = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // get name,email and avatar form client
+      const { email, name, avatar } = req.body as ISocialAuthBody;
+      // get the user
+      const user = await userModel.findOne({ email });
+      // if user not there then create new account for him
+      if(!user){
+        const newUser = await userModel.create({name,email,avatar});
+        sendToken(newUser,200,res)
+      }else{
+        sendToken(user,200,res)
+      }
+
+    } catch (error: any) {
+      throw next(new ErrorHandler(error.message, 400));
     }
   }
 );
