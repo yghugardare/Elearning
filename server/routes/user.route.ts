@@ -4,6 +4,7 @@ import {
   loginUser,
   logoutUser,
   registrationUser,
+  updateAccessToken,
 } from "../controller/user.controller";
 import { isAuthenticated } from "../middleware/auth";
 
@@ -13,6 +14,7 @@ userRouter.post("/registration", registrationUser);
 userRouter.post("/activate-user", activateUser);
 userRouter.post("/login", loginUser);
 userRouter.get("/logout", isAuthenticated, logoutUser);
+userRouter.get("/refresh",updateAccessToken);
 // get(/refresh,updateAccessToken) go to postman
 // then go to user.service.ts
 

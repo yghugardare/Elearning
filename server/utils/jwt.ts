@@ -14,27 +14,31 @@ interface ITokenOptions {
   secure?: boolean;
 }
 // parse enviroment variables to integrates with fallback values
-export const accessTokenExpire = parseInt(
+// parse enviroment variables to integrates with fallback values
+const accessTokenExpire = parseInt(
   process.env.ACCESS_TOKEN_EXPIRE || "300",
   10
 );
-export const refreshTokenExpire = parseInt(
+const refreshTokenExpire = parseInt(
   process.env.REFRESH_TOKEN_EXPIRE || "1200",
   10
 );
 
 // options for cookies
 export const accessTokenOptions: ITokenOptions = {
-  expires: new Date(Date.now() + accessTokenExpire * 1000 * 60 * 60),
-  maxAge: accessTokenExpire * 1000,
+  expires: new Date(Date.now() + accessTokenExpire * 60  * 60 * 1000),
+  maxAge: accessTokenExpire * 60 * 60 * 1000,
   httpOnly: true,
-  sameSite: "lax",
+  sameSite: "none",
+  secure:true,
 };
+
 export const refreshTokenOptions: ITokenOptions = {
-  expires: new Date(Date.now() + refreshTokenExpire * 1000 * 60 * 60 * 24),
-  maxAge: refreshTokenExpire * 1000,
+  expires: new Date(Date.now() + refreshTokenExpire * 24 * 60 * 60 * 1000),
+  maxAge: refreshTokenExpire * 24 * 60 * 60 * 1000,
   httpOnly: true,
-  sameSite: "lax",
+  sameSite: "none",
+  secure: true,
 };
 // cread send token function
 export const sendToken = (user: IUser, statusCode: number, res: Response) => {
@@ -50,6 +54,7 @@ export const sendToken = (user: IUser, statusCode: number, res: Response) => {
   // set secure true only when in production
   if (process.env.NODE_ENV === "production") {
     accessTokenOptions.secure = true;
+    refreshTokenOptions.secure = true;
   }
 
   // send tokens to cookies
