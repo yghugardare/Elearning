@@ -1,16 +1,18 @@
 import { Response } from "express";
 import userModel from "../models/user.model";
+import { redis } from "../utils/redis";
 
 export const getUserById = async (id: string, res: Response) => {
   // get user from db
-  // console.log("id-",id)
-  const user = await userModel.findById(id);
-  // console.log(user)
-  // return user as resonse
-  res.status(201).json({
-    success: true,
-    user,
-  });
+  
+  const userJson = await redis.get(id);
+  if (userJson) {
+    const user = JSON.parse(userJson);
+    res.status(201).json({
+      success: true,
+      user,
+    });
+  }
 };
 
 /*
@@ -24,11 +26,11 @@ export const getUserById = async (id: string, res: Response) => {
 user = await usermodel.findbyid(id)
 
 //   if (userJson) {
-//     const user = JSON.parse(userJson);
-    res.status(201).json({
-      success: true,
-      user,
-    });
+//    const user = JSON.parse(userJson);
+    // res.status(201).json({
+    //   success: true,
+    //   user,
+    // });
 //   }
 }; -- go to controller
 

@@ -7,6 +7,8 @@ import {
   registrationUser,
   socialAuth,
   updateAccessToken,
+  updatePassword,
+  updateUserInfo,
 } from "../controller/user.controller";
 import { isAuthenticated } from "../middleware/auth";
 
@@ -19,5 +21,12 @@ userRouter.get("/logout", isAuthenticated, logoutUser);
 userRouter.get("/refresh",updateAccessToken);
 userRouter.get("/me",isAuthenticated,getUserInfo);
 userRouter.post("/social-auth",socialAuth);
-// post(/social-auth,socialAuth) go to postman
+userRouter.put("/update-user-info",isAuthenticated,updateUserInfo)
+userRouter.put("/update-user-password",isAuthenticated,updatePassword)
+
+// -- go to user controller
+// -- here 3
+// put(update-user-avatar.isAuth,updateuserProfilepicture)
+
+
 export default userRouter;

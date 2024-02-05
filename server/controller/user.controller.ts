@@ -14,6 +14,7 @@ import {
 } from "../utils/jwt";
 import { redis } from "../utils/redis";
 import { getUserById } from "../services/user.service";
+import { stringify } from "querystring";
 
 // register user
 interface IRegistrationBody {
@@ -299,19 +300,96 @@ export const socialAuth = CatchAsyncError(
       // get the user
       const user = await userModel.findOne({ email });
       // if user not there then create new account for him
-      if(!user){
-        const newUser = await userModel.create({name,email,avatar});
-        sendToken(newUser,200,res)
-      }else{
-        sendToken(user,200,res)
+      if (!user) {
+        const newUser = await userModel.create({ name, email, avatar });
+        sendToken(newUser, 200, res);
+      } else {
+        sendToken(user, 200, res);
       }
-
     } catch (error: any) {
       throw next(new ErrorHandler(error.message, 400));
     }
   }
 );
+// update user info
+interface IUpdateUserInfo {
+  name?: string;
+  email?: string;
+}
+export const updateUserInfo = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // get name and email from body
+      const { name, email } = req.body as IUpdateUserInfo;
+      // take the user id
+      const userId = req.user?._id;
+      const user = await userModel.findById(userId);
+      // update email
+      if (email && user) {
+        const isEmailExist = await userModel.findOne({ email });
+        if (!isEmailExist) {
+          return next(new ErrorHandler("Email already exists!", 400));
+        }
+        user.email = email;
+      }
+      // update name
+      if(name && user){
+        user.name = name;
+      }
+      // save changes to our database
+      await user?.save();
+      // update user cache
+      await redis.set(userId,JSON.stringify(user));
+      // send the response
+      res.status(201).json({
+        success:true,
+        user,
+      })
+    } catch (error:any) {
+      return next(new ErrorHandler(error.message,400))
+    }
+  }
+);
+// update user password
+interface IUpdatePassword{
+  oldPassword: string;
+  newPassword: string;
+}
+export const updatePassword =  CatchAsyncError(
+  async(req:Request,res:Response, next:NextFunction)=>{
+    try {
+      const {oldPassword,newPassword} = req.body as IUpdatePassword;
+      if(!oldPassword || !newPassword){
+        return next(new ErrorHandler("Please enter old and new Password",400));
+      }
+      // get the user with password
+      const user = await userModel.findById(req.user?._id).select("+password");
+      // handle case in case of social auth
+      if(user?.password === undefined){
+        return next(new ErrorHandler("Invalid User",400));
+      }
+      // check if password correct or not
+      const isPasswordMatch = await user?.comparePassword(oldPassword);
+      if(!isPasswordMatch){
+        return next(new ErrorHandler("Invalid old password",400));
+      }
+      // reset password
+      user.password = newPassword;
+      // save in database
+      await user.save();
+      // save in the cache
+      await redis.set(req.user?.id,JSON.stringify(user));
+      // send response
+      res.status(201).json({
+        success:true,
+        user
+      });
 
+    } catch (error:any) {
+      return next(new ErrorHandler(error.message,400));
+    }
+  }
+)
 /*
 
 export const registrationUser = CatchAsyncError(
@@ -478,7 +556,7 @@ export const logoutUser = CatchAsyncError(
   }
  );
 
---- start  here
+
 // update access token, which will simply update our access token
 export const updateAccessToken = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -532,7 +610,7 @@ export const updateAccessToken = CatchAsyncError(
     }
   }
 );
--- here from service
+
 // get user info
 export const getUserInfo = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -570,7 +648,7 @@ export const socialAuth = CatchAsyncError(
     }
   } -- we are validating everything from frontend nextAuth
 ); -- go to route
-
+-- start here
 // update user info
 interface IUpdateUserInfo {
   name?: string;
@@ -584,13 +662,13 @@ export const updateUserInfo = CatchAsyncError(
 
       const userId = req.user?._id;
       const user = await userModel.findById(userId);
-
+      // check  2:39 line 289
       if (name && user) {
         user.name = name;
       }
 
       await user?.save();
-
+      // update our cache
       await redis.set(userId, JSON.stringify(user));
 
       res.status(201).json({
@@ -601,8 +679,8 @@ export const updateUserInfo = CatchAsyncError(
       return next(new ErrorHandler(error.message, 400));
     }
   }
-);
-
+); -- go to service 
+-- here2
 // update user password
 interface IUpdatePassword {
   oldPassword: string;
@@ -619,7 +697,7 @@ export const updatePassword = CatchAsyncError(
       }
 
       const user = await userModel.findById(req.user?._id).select("+password");
-
+      // to handle case for social auth
       if (user?.password === undefined) {
         return next(new ErrorHandler("Invalid user", 400));
       }
@@ -644,8 +722,8 @@ export const updatePassword = CatchAsyncError(
       return next(new ErrorHandler(error.message, 400));
     }
   }
-);
-
+);  -- go to route
+-- here 3
 interface IUpdateProfilePicture {
   avatar: string;
 }
@@ -659,7 +737,7 @@ export const updateProfilePicture = CatchAsyncError(
       const userId = req.user?._id;
 
       const user = await userModel.findById(userId).select("+password");
-
+-- install CLoudinary
       if (avatar && user) {
         // if user have one avatar then call this if
         if (user?.avatar?.public_id) {
@@ -698,7 +776,7 @@ export const updateProfilePicture = CatchAsyncError(
       return next(new ErrorHandler(error.message, 400));
     }
   }
-);
+);  -- go to route
 
 // get all users --- only for admin
 export const getAllUsers = CatchAsyncError(
