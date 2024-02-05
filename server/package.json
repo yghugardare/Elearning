@@ -17,6 +17,7 @@
     "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^20.11.15",
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.0.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.1",
