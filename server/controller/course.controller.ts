@@ -5,6 +5,7 @@ import cloudinary from "cloudinary";
 import { url } from "inspector";
 import { createCourse } from "../services/course.service";
 import CourseModel from "../models/course.model";
+import { redis } from "../utils/redis";
 // upload course
 export const uploadCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -74,28 +75,30 @@ export const editCourse = CatchAsyncError(
     }
   }
 );
-/*
-// get single course --- without purchasing
 export const getSingleCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const courseId = req.params.id;
-
+      // get course cache ,JSON
       const isCacheExist = await redis.get(courseId);
-
       if (isCacheExist) {
+        // debug
+        // console.log("redis hitt");
+        // make it object
         const course = JSON.parse(isCacheExist);
         res.status(200).json({
           success: true,
           course,
         });
       } else {
-        const course = await CourseModel.findById(req.params.id).select(
+        // console.log("mongodb hit");
+        // get the course
+        const course = await CourseModel.findById(courseId).select(
           "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
         );
-
-        await redis.set(courseId, JSON.stringify(course), "EX", 604800); // 7days
-
+        // set course to redis , so that next time info is rendered directly from the cache
+        // expiration time of 60x60x24x7 = 604800 = 7days, for the course data
+        await redis.set(courseId, JSON.stringify(course), "EX", 604800);
         res.status(200).json({
           success: true,
           course,
@@ -106,15 +109,13 @@ export const getSingleCourse = CatchAsyncError(
     }
   }
 );
-
-// get all courses --- without purchasing
+// get all courses
 export const getAllCourses = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const courses = await CourseModel.find().select(
         "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
       );
-
       res.status(200).json({
         success: true,
         courses,
@@ -124,6 +125,8 @@ export const getAllCourses = CatchAsyncError(
     }
   }
 );
+
+/*
 
 // get course content -- only for valid user
 export const getCourseByUser = CatchAsyncError(
