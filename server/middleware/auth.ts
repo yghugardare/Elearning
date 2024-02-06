@@ -48,6 +48,7 @@ export const authorizeRoles = (...roles: string[]) => {
         )
       );
     }
+    // else validate and go further
     next();
   };
 };
