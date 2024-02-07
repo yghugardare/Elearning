@@ -365,9 +365,7 @@ export const addReview = CatchAsyncError(
     }
   }
 );
-/*
-
-// add reply in review
+//add reply to review only for admin
 interface IAddReviewData {
   comment: string;
   courseId: string;
@@ -376,39 +374,36 @@ interface IAddReviewData {
 export const addReplyToReview = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      // get data from client
       const { comment, courseId, reviewId } = req.body as IAddReviewData;
-
+      // get course from mongo db
       const course = await CourseModel.findById(courseId);
-
       if (!course) {
         return next(new ErrorHandler("Course not found", 404));
       }
-
+      // console.log(course)
+      // get review from the course
       const review = course?.reviews?.find(
         (rev: any) => rev._id.toString() === reviewId
       );
-
       if (!review) {
         return next(new ErrorHandler("Review not found", 404));
       }
-
       const replyData: any = {
         user: req.user,
         comment,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
-
       if (!review.commentReplies) {
         review.commentReplies = [];
       }
-
+      // push reply to comment replies
       review.commentReplies?.push(replyData);
-      
+
+      // save to ddb
       await course?.save();
-
-      await redis.set(courseId, JSON.stringify(course), "EX", 604800); // 7days
-
+      // await redis.set(courseId, JSON.stringify(course), "EX", 604800); // 7days
       res.status(200).json({
         success: true,
         course,
@@ -419,6 +414,8 @@ export const addReplyToReview = CatchAsyncError(
   }
 );
 
+/*
+--
 // get all courses --- only for admin
 export const getAdminAllCourses = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
