@@ -125,7 +125,40 @@ export const getAllCourses = CatchAsyncError(
     }
   }
 );
+// get course content only for those who purchased it
+export const getCourseByUser = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // fetch user course list
+      const userCourseList = req.user?.courses;
 
+      // console.log(req.user?.name)
+      // console.log(userCourseList)
+
+      // get course id from param url
+      const courseId = req.params.id;
+      // has the user purchased?
+      const courseExists = userCourseList?.find(
+        (course: any) => course._id.toString() === courseId
+      );
+      if (!courseExists) {
+        return next(
+          new ErrorHandler("You are not eligible to access this course", 404)
+        );
+      }
+      // get course
+      const course = await CourseModel.findById(courseId);
+      // get constent
+      const content = course?.courseData;
+      res.status(200).json({
+        success: true,
+        content,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
 /*
 
 // get course content -- only for valid user
