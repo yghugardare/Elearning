@@ -6,6 +6,10 @@ import { url } from "inspector";
 import { createCourse } from "../services/course.service";
 import CourseModel from "../models/course.model";
 import { redis } from "../utils/redis";
+import mongoose from "mongoose";
+import path from "path";
+import ejs from "ejs";
+import sendMail from "../utils/sendMail";
 // upload course
 export const uploadCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -159,83 +163,50 @@ export const getCourseByUser = CatchAsyncError(
     }
   }
 );
-/*
-
-// get course content -- only for valid user
-export const getCourseByUser = CatchAsyncError(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const userCourseList = req.user?.courses;
-      const courseId = req.params.id;
-
-      const courseExists = userCourseList?.find(
-        (course: any) => course._id.toString() === courseId
-      );
-
-      if (!courseExists) {
-        return next(
-          new ErrorHandler("You are not eligible to access this course", 404)
-        );
-      }
-
-      const course = await CourseModel.findById(courseId);
-
-      const content = course?.courseData;
-
-      res.status(200).json({
-        success: true,
-        content,
-      });
-    } catch (error: any) {
-      return next(new ErrorHandler(error.message, 500));
-    }
-  }
-);
-
-// add question in course
+// add question to our course
 interface IAddQuestionData {
   question: string;
   courseId: string;
   contentId: string;
 }
-
 export const addQuestion = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      // fetch question from client
       const { question, courseId, contentId }: IAddQuestionData = req.body;
+      // get the course from course id
       const course = await CourseModel.findById(courseId);
-
+      // check if the content id is valid or not
       if (!mongoose.Types.ObjectId.isValid(contentId)) {
-        return next(new ErrorHandler("Invalid content id", 400));
+        return next(new ErrorHandler("Invalid content Id", 400));
       }
 
-      const couseContent = course?.courseData?.find((item: any) =>
-        item._id.equals(contentId)
-      );
+      // get the course content
+      const courseContent = course?.courseData?.find((item: any) => {
+        return item._id.equals(contentId);
+      });
 
-      if (!couseContent) {
-        return next(new ErrorHandler("Invalid content id", 400));
+      // if course content not found
+      if (!courseContent) {
+        return next(new ErrorHandler("Invalid content Id", 400));
       }
-
-      // create a new question object
+      // create a new question
       const newQuestion: any = {
         user: req.user,
         question,
         questionReplies: [],
       };
+      // add questionn to course content
+      courseContent.questions.push(newQuestion);
+      // send notfication for the question to the admin
+      // await NotificationModel.create({
+      //   user: req.user?._id,
+      //   title: "New Question Received",
+      //   message: `You have a new question in ${couseContent.title}`,
+      // });
 
-      // add this question to our course content
-      couseContent.questions.push(newQuestion);
-
-      await NotificationModel.create({
-        user: req.user?._id,
-        title: "New Question Received",
-        message: `You have a new question in ${couseContent.title}`,
-      });
-
-      // save the updated course
+      //save the course conten to mongo db
       await course?.save();
-
       res.status(200).json({
         success: true,
         course,
@@ -245,44 +216,41 @@ export const addQuestion = CatchAsyncError(
     }
   }
 );
-
-// add answer in course question
 interface IAddAnswerData {
   answer: string;
   courseId: string;
   contentId: string;
   questionId: string;
 }
-
 export const addAnwser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      // fetch answer for frontend
       const { answer, courseId, contentId, questionId }: IAddAnswerData =
         req.body;
-
+      // get the course from course id
       const course = await CourseModel.findById(courseId);
-
+      // check if the content id is valid or not
       if (!mongoose.Types.ObjectId.isValid(contentId)) {
-        return next(new ErrorHandler("Invalid content id", 400));
+        return next(new ErrorHandler("Invalid content Id", 400));
       }
-
-      const couseContent = course?.courseData?.find((item: any) =>
+      // get the course content
+      const courseContent = course?.courseData?.find((item: any) =>
         item._id.equals(contentId)
       );
-
-      if (!couseContent) {
-        return next(new ErrorHandler("Invalid content id", 400));
+      // if course content not found
+      if (!courseContent) {
+        return next(new ErrorHandler("Invalid content Id", 400));
       }
-
-      const question = couseContent?.questions?.find((item: any) =>
+      // search question
+      const question = courseContent?.questions?.find((item: any) =>
         item._id.equals(questionId)
       );
-
+      // handle case
       if (!question) {
-        return next(new ErrorHandler("Invalid question id", 400));
+        return next(new ErrorHandler("Invalid Question Id", 400));
       }
-
-      // create a new answer object
+      // create  a new answer object
       const newAnswer: any = {
         user: req.user,
         answer,
@@ -290,29 +258,31 @@ export const addAnwser = CatchAsyncError(
         updatedAt: new Date().toISOString(),
       };
 
-      // add this answer to our course content
+      // add answer to course content
       question.questionReplies.push(newAnswer);
-
+      // save to data base
       await course?.save();
-
-      if (req.user?._id === question.user._id) {
+      // if i am replying to my own question then no need to send me mail
+      if (req.user?._id === question.user?._id) {
         // create a notification
-        await NotificationModel.create({
-          user: req.user?._id,
-          title: "New Question Reply Received",
-          message: `You have a new question reply in ${couseContent.title}`,
-        });
+        console.log("Same ho");
+        // await NotificationModel.create({
+        //   user: req.user?._id,
+        //   title: "New Question Reply Received",
+        //   message: `You have a new question reply in ${couseContent.title}`,
+        // });
       } else {
+        // send mail
         const data = {
           name: question.user.name,
-          title: couseContent.title,
+          title: courseContent.title,
         };
-
+        // use ejs to render html file with data
         const html = await ejs.renderFile(
           path.join(__dirname, "../mails/question-reply.ejs"),
           data
         );
-
+        // send mail
         try {
           await sendMail({
             email: question.user.email,
@@ -324,7 +294,7 @@ export const addAnwser = CatchAsyncError(
           return next(new ErrorHandler(error.message, 500));
         }
       }
-
+      // send response
       res.status(200).json({
         success: true,
         course,
@@ -334,6 +304,8 @@ export const addAnwser = CatchAsyncError(
     }
   }
 );
+/*
+
 
 // add review in course
 interface IAddReviewData {
