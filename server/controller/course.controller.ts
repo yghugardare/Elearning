@@ -10,6 +10,7 @@ import mongoose from "mongoose";
 import path from "path";
 import ejs from "ejs";
 import sendMail from "../utils/sendMail";
+import NotificationModel from "../models/notification.model";
 // upload course
 export const uploadCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -199,11 +200,11 @@ export const addQuestion = CatchAsyncError(
       // add questionn to course content
       courseContent.questions.push(newQuestion);
       // send notfication for the question to the admin
-      // await NotificationModel.create({
-      //   user: req.user?._id,
-      //   title: "New Question Received",
-      //   message: `You have a new question in ${couseContent.title}`,
-      // });
+      await NotificationModel.create({
+        user: req.user?._id,
+        title: "New Question Received",
+        message: `You have a new question in ${courseContent.title}`,
+      });
 
       //save the course conten to mongo db
       await course?.save();
@@ -266,11 +267,11 @@ export const addAnwser = CatchAsyncError(
       if (req.user?._id === question.user?._id) {
         // create a notification
         console.log("Same ho");
-        // await NotificationModel.create({
-        //   user: req.user?._id,
-        //   title: "New Question Reply Received",
-        //   message: `You have a new question reply in ${couseContent.title}`,
-        // });
+        await NotificationModel.create({
+          user: req.user?._id,
+          title: "New Question Reply Received",
+          message: `You have a new question reply in ${courseContent.title}`,
+        });
       } else {
         // send mail
         const data = {
@@ -350,7 +351,7 @@ export const addReview = CatchAsyncError(
       };
       // await redis.set(courseId, JSON.stringify(course), "EX", 604800); // 7days
 
-      // // create notification
+      // create notification
       // await NotificationModel.create({
       //   user: req.user?._id,
       //   title: "New Review Received",
