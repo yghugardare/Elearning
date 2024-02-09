@@ -1,4 +1,4 @@
 # Elearning website major project
 
-eLearningLMS
 
+- orders and notification maintaing done
