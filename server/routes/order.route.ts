@@ -1,15 +1,12 @@
-/*
 import express from "express";
-import { authorizeRoles, isAutheticated } from "../middleware/auth";
-import {
-  createOrder,
-  getAllOrders,
-  newPayment,
-  sendStripePublishableKey,
-} from "../controllers/order.controller";
-const orderRouter = express.Router();
+import { authorizeRoles, isAuthenticated } from "../middleware/auth";
+import { createOrder } from "../controller/order.controller";
 
-orderRouter.post("/create-order", isAutheticated, createOrder);
+export const orderRouter = express.Router();
+
+orderRouter.post("/create-order", isAuthenticated, createOrder);
+
+/*
 -- go to app.ts then postman
 orderRouter.get(
   "/get-orders",
