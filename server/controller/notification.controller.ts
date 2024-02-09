@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import ErrorHandler from "../utils/ErrorHandler";
 import NotificationModel from "../models/notification.model";
-
+import cron from "node-cron";
 export const getNotifications = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -52,24 +52,13 @@ export const updateNotification = CatchAsyncError(
     }
   }
 );
-
-/*
-import NotificationModel from "../models/notification.Model";
-import { NextFunction, Request, Response } from "express";
-import { CatchAsyncError } from "../middleware/catchAsyncErrors";
-import ErrorHandler from "../utils/ErrorHandler";
-import cron from "node-cron";
-
-);
--- go to route
--- add notification to course model
--- add question , add notification when user does both asks question and ask replies
-- install node crone
-// delete notification --- only admin
-cron.schedule("0 0 0 * * *", async() => {
+//  run the task every day at midnight
+cron.schedule("0 0 0 * * *", async () => {
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-  await NotificationModel.deleteMany({status:"read",createdAt: {$lt: thirtyDaysAgo}});
-  console.log('Deleted read notifications');
+  // delete notifications more than 30 days
+  await NotificationModel.deleteMany({
+    status: "read",
+    createdAt: { $lt: thirtyDaysAgo },
+  });
+  console.log("Deleted read notifications");
 });
-
-*/
