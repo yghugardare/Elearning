@@ -11,6 +11,7 @@ import {
   updatePassword,
   updateProfilePicture,
   updateUserInfo,
+  updateUserRole,
 } from "../controller/user.controller";
 import { authorizeRoles, isAuthenticated } from "../middleware/auth";
 
@@ -32,5 +33,18 @@ userRouter.get(
   authorizeRoles("admin"),
   getAllUsers
 );
+userRouter.put(
+  "/update-user",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  updateUserRole
+);
+// --test postman
+// userRouter.delete(
+//   "/delete-user/:id",
+//   isAutheticated,
+//   authorizeRoles("admin"),
+//   deleteUser
+// );
 
 export default userRouter;

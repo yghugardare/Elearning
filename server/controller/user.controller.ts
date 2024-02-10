@@ -13,7 +13,11 @@ import {
   sendToken,
 } from "../utils/jwt";
 import { redis } from "../utils/redis";
-import { getAllUsersService, getUserById } from "../services/user.service";
+import {
+  getAllUsersService,
+  getUserById,
+  updateUserRoleService,
+} from "../services/user.service";
 import { stringify } from "querystring";
 import cloudinary from "cloudinary";
 // register user
@@ -457,9 +461,7 @@ export const getAllUsers = CatchAsyncError(
     }
   }
 );
-
-/*
-// update user role --- only for admin
+// allow admin to cahnge users roel
 export const updateUserRole = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -467,7 +469,7 @@ export const updateUserRole = CatchAsyncError(
       const isUserExist = await userModel.findOne({ email });
       if (isUserExist) {
         const id = isUserExist._id;
-        updateUserRoleService(res,id, role);
+        updateUserRoleService(res, id, role);
       } else {
         res.status(400).json({
           success: false,
@@ -479,6 +481,8 @@ export const updateUserRole = CatchAsyncError(
     }
   }
 );
+
+/*
 
 // Delete user --- only for admin
 export const deleteUser = CatchAsyncError(
