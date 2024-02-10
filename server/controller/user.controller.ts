@@ -448,39 +448,6 @@ export const updateProfilePicture = CatchAsyncError(
   }
 );
 // get all courses only for admin
-export const getAllUsers = CatchAsyncError(async(req:Request,res:Response,next:NextFunction) => {
-  try {
-    getAllUsersService(res);
-  } catch (error:any) {
-    return next(new ErrorHandler(error.message,400));
-  }
-})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-from service
-// get all users --- only for admin
 export const getAllUsers = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -490,7 +457,8 @@ export const getAllUsers = CatchAsyncError(
     }
   }
 );
--- go to course controller
+
+/*
 // update user role --- only for admin
 export const updateUserRole = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {

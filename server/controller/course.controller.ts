@@ -3,7 +3,7 @@ import { CatchAsyncError } from "../middleware/catchAsyncError";
 import ErrorHandler from "../utils/ErrorHandler";
 import cloudinary from "cloudinary";
 import { url } from "inspector";
-import { createCourse } from "../services/course.service";
+import { createCourse, getAllCoursesService } from "../services/course.service";
 import CourseModel from "../models/course.model";
 import { redis } from "../utils/redis";
 import mongoose from "mongoose";
@@ -414,7 +414,16 @@ export const addReplyToReview = CatchAsyncError(
     }
   }
 );
-
+// get all course related info for admin
+export const getAdminAllCourses = CatchAsyncError(
+  async (req:Response,res:Response,next:NextFunction) => {
+    try {
+      getAllCoursesService(res)
+    } catch (error:any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+)
 /*
 -- fromm user
 // get all courses --- only for admin

@@ -14,7 +14,6 @@ import {
 } from "../controller/user.controller";
 import { authorizeRoles, isAuthenticated } from "../middleware/auth";
 
-
 const userRouter = express.Router();
 userRouter.post("/registration", registrationUser);
 
@@ -33,6 +32,5 @@ userRouter.get(
   authorizeRoles("admin"),
   getAllUsers
 );
-
 
 export default userRouter;
