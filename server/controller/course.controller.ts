@@ -425,19 +425,7 @@ export const getAdminAllCourses = CatchAsyncError(
   }
 );
 /*
--- fromm user
-// get all courses --- only for admin
-export const getAdminAllCourses = CatchAsyncError(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      -- go to xourse service
-      getAllCoursesService(res);
-    } catch (error: any) {
-      return next(new ErrorHandler(error.message, 400));
-    }
-  }
-);
-
+--  here
 // Delete Course --- only for admin
 export const deleteCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -462,7 +450,7 @@ export const deleteCourse = CatchAsyncError(
       return next(new ErrorHandler(error.message, 400));
     }
   }
-);
+); go to route
 
 // generate video url
 export const generateVideoUrl = CatchAsyncError(

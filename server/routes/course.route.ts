@@ -48,3 +48,9 @@ courseRouter.get(
   authorizeRoles("admin"),
   getAdminAllCourses
 );
+// courseRouter.delete(
+//   "/delete-course/:id",
+//   isAutheticated,
+//   authorizeRoles("admin"),
+//   deleteCourse
+// );
