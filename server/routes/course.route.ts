@@ -47,5 +47,4 @@ courseRouter.get(
   isAuthenticated,
   authorizeRoles("admin"),
   getAdminAllCourses
-)
-
+);

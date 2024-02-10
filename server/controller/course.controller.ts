@@ -416,14 +416,14 @@ export const addReplyToReview = CatchAsyncError(
 );
 // get all course related info for admin
 export const getAdminAllCourses = CatchAsyncError(
-  async (req:Response,res:Response,next:NextFunction) => {
+  async (req: Response, res: Response, next: NextFunction) => {
     try {
-      getAllCoursesService(res)
-    } catch (error:any) {
+      getAllCoursesService(res);
+    } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
   }
-)
+);
 /*
 -- fromm user
 // get all courses --- only for admin

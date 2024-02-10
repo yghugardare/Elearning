@@ -8,7 +8,7 @@ import path from "path";
 import ejs from "ejs";
 import sendMail from "../utils/sendMail";
 import NotificationModel from "../models/notification.model";
-import { newOrder } from "../services/order.service";
+import { getAllOrdersService, newOrder } from "../services/order.service";
 
 // creating order , user will purchase the course
 export const createOrder = CatchAsyncError(
@@ -99,13 +99,22 @@ export const createOrder = CatchAsyncError(
       // save to course collection
       await course.save();
       // set new order
-      newOrder(data,res,next)
+      newOrder(data, res, next);
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
   }
 );
-
+// get All orders  for admin in admin dashboard
+export const getAllOrders = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      getAllOrdersService(res);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
 /*
 import { NextFunction, Request, Response } from "express";
 import { CatchAsyncError } from "../middleware/catchAsyncErrors";
@@ -122,18 +131,7 @@ import { getAllOrdersService, newOrder } from "../services/order.service";
 import { redis } from "../utils/redis";
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
--- add this
-// get All orders --- only for admin
-export const getAllOrders = CatchAsyncError(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      getAllOrdersService(res);
-    } catch (error: any) {
-      return next(new ErrorHandler(error.message, 500));
-    }
-  }
-);
-go to course route
+
 
 //  send stripe publishble key
 export const sendStripePublishableKey = CatchAsyncError(
