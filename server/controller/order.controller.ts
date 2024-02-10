@@ -122,6 +122,7 @@ import { getAllOrdersService, newOrder } from "../services/order.service";
 import { redis } from "../utils/redis";
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+-- add this
 // get All orders --- only for admin
 export const getAllOrders = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -132,6 +133,7 @@ export const getAllOrders = CatchAsyncError(
     }
   }
 );
+go to course route
 
 //  send stripe publishble key
 export const sendStripePublishableKey = CatchAsyncError(

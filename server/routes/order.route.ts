@@ -14,7 +14,7 @@ orderRouter.get(
   authorizeRoles("admin"),
   getAllOrders
 );
-
+-- till this , go to user-route
 orderRouter.get("/payment/stripepublishablekey", sendStripePublishableKey);
 
 orderRouter.post("/payment", isAutheticated, newPayment);

@@ -31,14 +31,20 @@ courseRouter.put(
 courseRouter.get("/get-course/:id", getSingleCourse);
 
 courseRouter.get("/get-courses", getAllCourses);
-courseRouter.get("/get-course-content/:id",isAuthenticated,getCourseByUser);
-courseRouter.put("/add-question",isAuthenticated,addQuestion);
-courseRouter.put("/add-answer",isAuthenticated,addAnwser);
-courseRouter.put("/add-review/:id",isAuthenticated,addReview)
-courseRouter.put("/add-reply",isAuthenticated,authorizeRoles("admin"),addReplyToReview)
-// courseRouter.put(
-//   "/add-reply",
+courseRouter.get("/get-course-content/:id", isAuthenticated, getCourseByUser);
+courseRouter.put("/add-question", isAuthenticated, addQuestion);
+courseRouter.put("/add-answer", isAuthenticated, addAnwser);
+courseRouter.put("/add-review/:id", isAuthenticated, addReview);
+courseRouter.put(
+  "/add-reply",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  addReplyToReview
+);
+// add this 
+// courseRouter.get(
+//   "/get-admin-courses",
 //   isAutheticated,
 //   authorizeRoles("admin"),
-//   addReplyToReview
+//   getAdminAllCourses
 // );

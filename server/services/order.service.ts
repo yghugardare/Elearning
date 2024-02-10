@@ -13,7 +13,7 @@ export const newOrder = CatchAsyncError(async (data: any, res: Response) => {
 });
 
 /*
-
+- here from crse serv, go to order controller
 // Get All Orders
 export const getAllOrdersService = async (res: Response) => {
     const orders = await OrderModel.find().sort({ createdAt: -1 });

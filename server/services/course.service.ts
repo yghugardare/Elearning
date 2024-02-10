@@ -15,7 +15,7 @@ export const createCourse = CatchAsyncError(
     }
 )
 
-
+// -- from corrse 
 /*
 // Get All Courses
 export const getAllCoursesService = async (res: Response) => {
@@ -26,5 +26,5 @@ export const getAllCoursesService = async (res: Response) => {
       courses,
     });
   };
-  
+  -- go to order.ts
 */
