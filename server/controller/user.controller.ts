@@ -483,28 +483,24 @@ export const updateUserRole = CatchAsyncError(
 );
 // allow admin to delete a user from his course
 export const deleteUser = CatchAsyncError(
-  async(req:Request,res:Response,next:NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       // get id from param
-      const {id} = req.params;
+      const { id } = req.params;
       // console.log(id);
-      
-      const user  =  await userModel.findById(id);
-      if(!user){
+
+      const user = await userModel.findById(id);
+      if (!user) {
         return next(new ErrorHandler("User not found", 404));
       }
-      await user.deleteOne({id});
+      await user.deleteOne({ id });
       await redis.del(id);
       res.status(200).json({
-        success:true,
-        message:"User deleted succesfully"
-      })
-    } catch (error:any) {
-      return next(new ErrorHandler(error.message,400))
+        success: true,
+        message: "User deleted succesfully",
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
     }
   }
-)
-
-
-
-
+);
