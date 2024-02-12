@@ -159,6 +159,24 @@ export const editLayout = CatchAsyncError(
     }
   }
 );
+// get layout for all users
+export const getLayoutByType = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { type } = req.params;
+      const layout = await LayoutModel.findOne({ type });
+      if (!layout) {
+        return next(new ErrorHandler("Invalid type", 400));
+      }
+      res.status(201).json({
+        success: true,
+        layout,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
 
 /*
 // get layout by type
