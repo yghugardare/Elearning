@@ -80,6 +80,7 @@ export const editCourse = CatchAsyncError(
     }
   }
 );
+// get single course w/o purchasing
 export const getSingleCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -103,6 +104,7 @@ export const getSingleCourse = CatchAsyncError(
         );
         // set course to redis , so that next time info is rendered directly from the cache
         // expiration time of 60x60x24x7 = 604800 = 7days, for the course data
+        // advance cache
         await redis.set(courseId, JSON.stringify(course), "EX", 604800);
         res.status(200).json({
           success: true,
