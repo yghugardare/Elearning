@@ -63,10 +63,7 @@ export const createLayout = CatchAsyncError(
     }
   }
 );
-
-/*
-
-// Edit layout
+// edit layout feature
 export const editLayout = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -96,12 +93,32 @@ export const editLayout = CatchAsyncError(
           subTitle,
         };
 
-        await LayoutModel.findByIdAndUpdate(bannerData._id, { banner });
+        // const bannerData: any = await LayoutModel.findOne({ type: "Banner" });
+        // const { image, title, subTitle } = req.body;
+        // if (bannerData) {
+        //   await cloudinary.v2.uploader.destroy(bannerData.image.public_id);
+        // }
+        // // upload image to cloudinary
+        // const myCloud = await cloudinary.v2.uploader.upload(image, {
+        //   folder: "layout",
+        // });
+        // // save banner to db
+        // const banner = {
+        //   type: "Banner",
+        //   image: {
+        //     public_id: myCloud.public_id,
+        //     url: myCloud.secure_url,
+        //   },
+        //   title,
+        //   subTitle,
+        // };
+        await LayoutModel.findByIdAndUpdate(bannerData?._id, { banner });
       }
-
       if (type === "FAQ") {
         const { faq } = req.body;
-        const FaqItem = await LayoutModel.findOne({ type: "FAQ" });
+        // ones we have in our db
+        const FaqItems = await LayoutModel.findOne({ type: "FAQ" });
+        // ones we update
         const faqItems = await Promise.all(
           faq.map(async (item: any) => {
             return {
@@ -110,7 +127,8 @@ export const editLayout = CatchAsyncError(
             };
           })
         );
-        await LayoutModel.findByIdAndUpdate(FaqItem?._id, {
+        // update
+        await LayoutModel.findByIdAndUpdate(FaqItems?._id, {
           type: "FAQ",
           faq: faqItems,
         });
@@ -132,10 +150,9 @@ export const editLayout = CatchAsyncError(
           categories: categoriesItems,
         });
       }
-
       res.status(200).json({
         success: true,
-        message: "Layout Updated successfully",
+        message: "Layout updated successfully!",
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
@@ -143,6 +160,7 @@ export const editLayout = CatchAsyncError(
   }
 );
 
+/*
 // get layout by type
 export const getLayoutByType = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
