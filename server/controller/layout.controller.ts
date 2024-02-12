@@ -1,36 +1,51 @@
-
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
+import { CatchAsyncError } from "../middleware/catchAsyncError";
 import ErrorHandler from "../utils/ErrorHandler";
 import LayoutModel from "../models/layout.model";
 import cloudinary from "cloudinary";
-import { CatchAsyncError } from "../middleware/catchAsyncError";
-
-// create layout
 export const createLayout = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { type } = req.body;
-    
+      const isTypeExist = await LayoutModel.findOne({ type });
+      if (isTypeExist) {
+        return next(new ErrorHandler(`${type} already exist`, 400));
+      }
       if (type === "Banner") {
         const { image, title, subTitle } = req.body;
+        // upload immage on cloudinary
         const myCloud = await cloudinary.v2.uploader.upload(image, {
           folder: "layout",
         });
-        
+        // get banner
+        const banner = {
+          type: "Banner",
+          banner: {
+            image: {
+              public_id: myCloud.public_id,
+              url: myCloud.secure_url,
+            },
+            title,
+            subTitle,
+          },
+        };
+        // create banner documnent
         await LayoutModel.create(banner);
       }
       if (type === "FAQ") {
         const { faq } = req.body;
-    
-        await LayoutModel.create(faq);
+        const faqItems = await Promise.all(
+          faq.map(async (item: any) => {
+            return { question: item.question, answer: item.answer };
+          })
+        );
+        await LayoutModel.create({ type: "FAQ", faq: faqItems });
       }
       if (type === "Categories") {
         const { categories } = req.body;
         const categoriesItems = await Promise.all(
           categories.map(async (item: any) => {
-            return {
-              title: item.title,
-            };
+            return { title: item.title };
           })
         );
         await LayoutModel.create({
@@ -38,7 +53,7 @@ export const createLayout = CatchAsyncError(
           categories: categoriesItems,
         });
       }
-
+      // send response
       res.status(200).json({
         success: true,
         message: "Layout created successfully",
@@ -48,6 +63,8 @@ export const createLayout = CatchAsyncError(
     }
   }
 );
+
+/*
 
 // Edit layout
 export const editLayout = CatchAsyncError(
@@ -142,3 +159,4 @@ export const getLayoutByType = CatchAsyncError(
   }
 );
 
+*/
