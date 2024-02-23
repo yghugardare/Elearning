@@ -5,8 +5,9 @@ import Header from "./components/Header";
 import Hero from "./components/Route/Hero";
 interface Props {}
 const Page: FC<Props> = () => {
-const [open, setOpen] = useState(false);
-const [activeItem, setActiveItem] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [activeItem, setActiveItem] = useState(0);
+  const [route, setRoute] = useState("Login");
 
   return (
     <div>
@@ -16,11 +17,13 @@ const [activeItem, setActiveItem] = useState(0);
         keywords="Programming,mern,nextjs,redux,AI"
       />
       <Header
-      open={open}
-      setOpen={setOpen}
-      activeItem={activeItem}
+        open={open}
+        setOpen={setOpen}
+        activeItem={activeItem}
+        setRoute={setRoute}
+        route={route}
       />
-      <Hero/>
+      <Hero />
     </div>
   );
 };

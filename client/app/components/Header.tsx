@@ -4,14 +4,21 @@ import React, { FC, useState } from "react";
 import NavItems from "../utils/NavItems";
 import { ThemeSwitcher } from "../utils/ThemeSwitcher";
 import { HiOutlineMenuAlt3, HiOutlineUserCircle } from "react-icons/hi";
+import CustomModal from "../utils/CustomModel";
+import Login from "./Auth/Login";
+import Signup from "./Auth/SignUp";
+import Verification from "./Auth/Verification";
 type Props = {
   open: boolean;
   setOpen: (open: boolean) => void;
   activeItem: number;
+  route:string;
+  setRoute:(route:string)=> void;
 };
-const Header: FC<Props> = ({ activeItem, setOpen, open }) => {
+const Header: FC<Props> = ({ activeItem, setOpen, open,route,setRoute }) => {
   const [active, setActive] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
+  // const [route, setRoute] = useState("Login")
   if (typeof window !== "undefined") {
     window.addEventListener("scroll", () => {
       if (window.scrollY > 85) {
@@ -61,7 +68,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, open }) => {
               <HiOutlineUserCircle
                 size={25}
                 className="hidden 800px:block cursor-pointer dark:text-white text-black"
-                onClick={() => setOpen(true)}
+                onClick={() => {setOpen(true)}}
               />
             </div>
           </div>
@@ -89,6 +96,47 @@ const Header: FC<Props> = ({ activeItem, setOpen, open }) => {
           </div>
         )}
       </div>
+      {route === "Login" && (
+        <>
+          {open && (
+            <CustomModal
+              open={open}
+              setOpen={setOpen}
+              setRoute={setRoute}
+              activeItem={activeItem}
+              component={Login}
+              // refetch={refetch}
+            />
+          )}
+        </>
+      )}
+
+      {route === "Sign-Up" && (
+        <>
+          {open && (
+            <CustomModal
+              open={open}
+              setOpen={setOpen}
+              setRoute={setRoute}
+              activeItem={activeItem}
+              component={Signup}
+            />
+          )}
+        </>
+      )}
+      {route === "Verification" && (
+        <>
+          {open && (
+            <CustomModal
+              open={open}
+              setOpen={setOpen}
+              setRoute={setRoute}
+              activeItem={activeItem}
+              component={Verification}
+            />
+          )}
+        </>
+      )}
     </div>
   );
 };
