@@ -10,6 +10,7 @@ export const userApi = apiSlice.injectEndpoints({
         credentials: "include" as const,
       }),
     }),
+    // THIS
     editProfile: builder.mutation({
       query: ({ name }) => ({
         url: "update-user-info",
@@ -20,6 +21,7 @@ export const userApi = apiSlice.injectEndpoints({
         credentials: "include" as const,
       }),
     }),
+    // update  user password
     updatePassword: builder.mutation({
       query: ({ oldPassword, newPassword }) => ({
         url: "update-user-password",
@@ -62,5 +64,5 @@ export const {
   useUpdatePasswordMutation,
   useGetAllUsersQuery,
   useUpdateUserRoleMutation,
-  useDeleteUserMutation
+  useDeleteUserMutation,
 } = userApi;

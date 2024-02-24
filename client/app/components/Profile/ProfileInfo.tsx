@@ -42,20 +42,20 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
     if (error || updateError) {
       console.log(error);
     }
-    if(success){
+    if (success) {
       toast.success("Profile updated successfully!");
       setLoadUser(true);
     }
-  }, [isSuccess, error,success, updateError]);
+  }, [isSuccess, error, success, updateError]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     if (name !== "") {
-    //   await editProfile({
-    //     name: name,
-    //   });
+      await editProfile({
+        name: name,
+      });
     }
-    alert("ok")
+    // alert("ok")
   };
 
   return (

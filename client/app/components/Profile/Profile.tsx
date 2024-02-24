@@ -4,7 +4,7 @@ import SideBarProfile from "./SideBarProfile";
 import { useLogOutQuery } from "../../../redux/features/auth/authApi";
 import { signOut } from "next-auth/react";
 import ProfileInfo from "./ProfileInfo";
-// import ChangePassword from "./ChangePassword";
+import ChangePassword from "./ChangePassword";
 // import CourseCard from "../Course/CourseCard";
 // import { useGetUsersAllCoursesQuery } from "@/redux/features/courses/coursesApi";
 
@@ -72,11 +72,11 @@ const Profile: FC<Props> = ({ user }) => {
         </div>
       )}
 
-      {/* {active === 2 && (
+      {active === 2 && (
         <div className="w-full h-full bg-transparent mt-[80px]">
           <ChangePassword />
         </div>
-      )} */}
+      )}
 
       {/* {active === 3 && (
         <div className="w-full pl-7 px-2 800px:px-10 800px:pl-8 mt-[80px]">
