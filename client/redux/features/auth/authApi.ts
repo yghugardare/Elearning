@@ -12,6 +12,7 @@ export const authApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // endpoints here
     // mutation = put / post type req
+    // query = get
     register: builder.mutation<RegistrationResponse, RegistrationData>({
       query: (data) => ({
         // backend api endpoint

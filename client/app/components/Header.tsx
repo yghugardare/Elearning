@@ -34,10 +34,10 @@ const Header: FC<Props> = ({ activeItem, setOpen, open, route, setRoute }) => {
   // const {data:userData,isLoading,refetch} = useLoadUserQuery(undefined,{});
   const { data } = useSession();
   const [socialAuth, { isSuccess, error }] = useSocialAuthMutation();
-  // const [logout, setLogout] = useState(false);
-  // const {} = useLogOutQuery(undefined, {
-  //   skip: !logout ? true : false,
-  // });
+  const [logout, setLogout] = useState(false);
+  const {} = useLogOutQuery(undefined, {
+    skip: !logout ? true : false,
+  });
   useEffect(() => {
     // when user not loged in basically
     if (!user) {
@@ -48,10 +48,16 @@ const Header: FC<Props> = ({ activeItem, setOpen, open, route, setRoute }) => {
           avatar: data.user?.image,
         });
       }
+      if(data === null){
+        if(isSuccess){
+          toast.success("Login Successfully");
+        }
+      }
+      if(data === null ){
+          setLogout(true);
+      }
     }
-    if (isSuccess) {
-      toast.success("Login Successfully");
-    }
+    
   }, [data, user]);
 
   // useEffect(() => {
@@ -66,14 +72,14 @@ const Header: FC<Props> = ({ activeItem, setOpen, open, route, setRoute }) => {
   //         refetch();
   //       }
   //     }
-  //     if(data === null){
-  //       if(isSuccess){
-  //         toast.success("Login Successfully");
-  //       }
-  //     }
-  //     if(data === null && !isLoading && !userData){
-  //         setLogout(true);
-  //     }
+      // if(data === null){
+      //   if(isSuccess){
+      //     toast.success("Login Successfully");
+      //   }
+      // }
+      // if(data === null && !isLoading && !userData){
+      //     setLogout(true);
+      // }
   //   }
   // }, [data, userData,isLoading]);
   if (typeof window !== "undefined") {
@@ -127,7 +133,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, open, route, setRoute }) => {
                 <Link href={"/profile"}>
                   <Image
                     // src={userData?.user.avatar ? userData.user.avatar.url : avatar}
-                    src={user.avatar ? user.avatar : avatar}
+                    src={user.avatar ? user.avatar.url : avatar}
                     alt=""
                     width={30}
                     height={30}
