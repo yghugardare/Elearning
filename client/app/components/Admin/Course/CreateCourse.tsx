@@ -108,7 +108,7 @@ const CreateCourse = (props: Props) => {
     setCourseData(data);
   };
   const handleCourseCreate = async (e: any) => {
-    // const data = courseData;
+    const data = courseData;
     // if (!isLoading) {
     //   await createCourse(data);
     alert("create course")
@@ -140,20 +140,20 @@ const CreateCourse = (props: Props) => {
 
         {active === 2 && (
           <CourseContent
-            // active={active}
-            // setActive={setActive}
-            // courseContentData={courseContentData}
-            // setCourseContentData={setCourseContentData}
-            // handleSubmit={handleSubmit}
+            active={active}
+            setActive={setActive}
+            courseContentData={courseContentData}
+            setCourseContentData={setCourseContentData}
+            handleSubmit={handleSubmit}
           />
         )}
 
         {active === 3 && (
           <CoursePreview
-            // active={active}
-            // setActive={setActive}
-            // courseData={courseData}
-            // handleCourseCreate={handleCourseCreate}
+            active={active}
+            setActive={setActive}
+            courseData={courseData}
+            handleCourseCreate={handleCourseCreate}
           />
         )}
       </div>
