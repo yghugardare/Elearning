@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { styles } from "@/app/styles/style";
 // import { useGetHeroDataQuery } from "@/redux/features/layout/layoutApi";
 import Image from "next/image";
@@ -240,11 +241,10 @@ const CourseInformation: FC<Props> = ({
             onDrop={handleDrop}
           >
             {courseInfo.thumbnail ? (
-              <Image
+              <img
                 src={courseInfo.thumbnail}
                 alt="img"
-                layout="fill" // Add this prop for responsive images
-                objectFit="cover" // This prop is equivalent to 'object-cover' in the img tag
+                className="max-h-full w-full object-cover"
               />
             ) : (
               <span className="text-black dark:text-white">
