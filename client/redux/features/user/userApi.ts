@@ -33,6 +33,7 @@ export const userApi = apiSlice.injectEndpoints({
         credentials: "include" as const,
       }),
     }),
+    // gell all users
     getAllUsers: builder.query({
       query: () => ({
         url: "get-users",
