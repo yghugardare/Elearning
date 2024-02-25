@@ -20,9 +20,13 @@ const CourseInformation: FC<Props> = ({
   const [dragging, setDragging] = useState(false);
   //   const { data } = useGetHeroDataQuery("Categories", {});
 
-  const [categories, setCategories] = useState([]);
+  // const [categories, setCategories] = useState([]);
+  const categories = [
+    { title: "Frontend", _id: 1 },
+    { title: "Backend", _id: 2 },
+  ];
 
-  //   useEffect(() => {
+  //  useEffect(() => {
   //     if (data) {
   //       setCategories(data.layout.categories);
   //     }
