@@ -12,7 +12,7 @@ import {
 } from "@/redux/features/user/userApi";
 import { styles } from "@/app/styles/style";
 import { toast } from "react-hot-toast";
-
+// for people in the team
 type Props = {
   isTeam?: boolean;
 };
@@ -105,8 +105,9 @@ const AllCourses: FC<Props> = ({ isTeam }) => {
   ];
 
   const rows: any = [];
-
+  // if is team is true
   if (isTeam) {
+    // select only admins
     const newData =
       data && data.users.filter((item: any) => item.role === "admin");
 
@@ -149,6 +150,7 @@ const AllCourses: FC<Props> = ({ isTeam }) => {
       {isLoading ? (
         <Loader />
       ) : (
+        // add new memebr in team
         <Box m="20px">
           {isTeam && (
             <div className="w-full flex justify-end">
@@ -215,6 +217,7 @@ const AllCourses: FC<Props> = ({ isTeam }) => {
             <DataGrid checkboxSelection rows={rows} columns={columns} />
           </Box>
           {active && (
+            
             <Modal
               open={active}
               onClose={() => setActive(!active)}

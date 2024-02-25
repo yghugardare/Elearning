@@ -273,7 +273,7 @@ export const updateAccessToken = CatchAsyncError(
       //   success: true,
       //   accessToken,
       // });
-      next();
+      return next();
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }

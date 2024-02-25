@@ -41,6 +41,7 @@ export const userApi = apiSlice.injectEndpoints({
         credentials: "include" as const,
       }),
     }),
+    // update users role from admin ro user or user to admin
     updateUserRole: builder.mutation({
       query: ({ email, role }) => ({
         url: "update-user",
@@ -49,6 +50,7 @@ export const userApi = apiSlice.injectEndpoints({
         credentials: "include" as const,
       }),
     }),
+    // DELETE user based on id
     deleteUser: builder.mutation({
       query: (id) => ({
         url: `delete-user/${id}`,

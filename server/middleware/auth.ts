@@ -3,6 +3,7 @@ import { CatchAsyncError } from "./catchAsyncError";
 import ErrorHandler from "../utils/ErrorHandler";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { redis } from "../utils/redis";
+import { updateAccessToken } from "../controller/user.controller";
 
 // function to check if user is authenticated
 export const isAuthenticated = CatchAsyncError(
@@ -21,7 +22,15 @@ export const isAuthenticated = CatchAsyncError(
     if (!decoded) {
       return next(new ErrorHandler("access token is not valid", 400));
     }
-
+     // check if the access token is expired
+     if (decoded.exp && decoded.exp <= Date.now() / 1000) {
+      try {
+        await updateAccessToken(req, res, next);
+      } catch (error) {
+        return next(error);
+      }
+    } else {
+     
     // get user from redis through is id
     const user = await redis.get(decoded.id);
     if (!user) {
@@ -33,6 +42,7 @@ export const isAuthenticated = CatchAsyncError(
     req.user = JSON.parse(user);
     next();
   }
+}
 );
 
 // middleware to validate user role
