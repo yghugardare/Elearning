@@ -39,39 +39,42 @@ export const uploadCourse = CatchAsyncError(
 export const editCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // fetch the data
       const data = req.body;
+
+      const thumbnail = data.thumbnail;
+
       const courseId = req.params.id;
-      // const thumbnail = data.thumbnail;
-      //   const courseData = await CourseModel.findById(courseId) as any;
 
-      //   if (thumbnail && !thumbnail.startsWith("https")) {
-      //     await cloudinary.v2.uploader.destroy(courseData.thumbnail.public_id);
+      const courseData = await CourseModel.findById(courseId) as any;
 
-      //     const myCloud = await cloudinary.v2.uploader.upload(thumbnail, {
-      //       folder: "courses",
-      //     });
+      if (thumbnail && !thumbnail.startsWith("https")) {
+        await cloudinary.v2.uploader.destroy(courseData.thumbnail.public_id);
 
-      //     data.thumbnail = {
-      //       public_id: myCloud.public_id,
-      //       url: myCloud.secure_url,
-      //     };
-      //   }
+        const myCloud = await cloudinary.v2.uploader.upload(thumbnail, {
+          folder: "courses",
+        });
 
-      //   if (thumbnail.startsWith("https")) {
-      //     data.thumbnail = {
-      //       public_id: courseData?.thumbnail.public_id,
-      //       url: courseData?.thumbnail.url,
-      //     };
-      //   }
+        data.thumbnail = {
+          public_id: myCloud.public_id,
+          url: myCloud.secure_url,
+        };
+      }
+
+      if (thumbnail.startsWith("https")) {
+        data.thumbnail = {
+          public_id: courseData?.thumbnail.public_id,
+          url: courseData?.thumbnail.url,
+        };
+      }
+
       const course = await CourseModel.findByIdAndUpdate(
         courseId,
         {
           $set: data,
         },
-        // will instead give you the object after update was applied.
         { new: true }
       );
+
       res.status(201).json({
         success: true,
         course,
@@ -81,6 +84,7 @@ export const editCourse = CatchAsyncError(
     }
   }
 );
+
 // get single course w/o purchasing
 export const getSingleCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {

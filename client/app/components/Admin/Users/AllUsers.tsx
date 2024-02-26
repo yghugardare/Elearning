@@ -28,6 +28,7 @@ const AllCourses: FC<Props> = ({ isTeam }) => {
     useUpdateUserRoleMutation();
   const { isLoading, data, refetch } = useGetAllUsersQuery(
     {},
+    // ADD THIS
     { refetchOnMountOrArgChange: true }
   );
   const [deleteUser, { isSuccess: deleteSuccess, error: deleteError }] =
@@ -42,12 +43,12 @@ const AllCourses: FC<Props> = ({ isTeam }) => {
     }
 
     if (isSuccess) {
-    //   refetch();
+        refetch();
       toast.success("User role updated successfully");
       setActive(false);
     }
     if (deleteSuccess) {
-    //   refetch();
+        refetch();
       toast.success("Delete user successfully!");
       setOpen(false);
     }
@@ -57,7 +58,7 @@ const AllCourses: FC<Props> = ({ isTeam }) => {
         toast.error(errorMessage.data.message);
       }
     }
-  }, [updateError, isSuccess, deleteSuccess, deleteError,]);
+  }, [updateError, isSuccess, deleteSuccess, deleteError,refetch]);
 
   const columns = [
     { field: "id", headerName: "ID", flex: 0.3 },
@@ -217,7 +218,6 @@ const AllCourses: FC<Props> = ({ isTeam }) => {
             <DataGrid checkboxSelection rows={rows} columns={columns} />
           </Box>
           {active && (
-            
             <Modal
               open={active}
               onClose={() => setActive(!active)}

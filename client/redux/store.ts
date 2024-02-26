@@ -15,10 +15,7 @@ export const store = configureStore({
 
 // call the load user function on every page load
 const initializeApp = async () => {
-  await store.dispatch(
-    // refresh token
-    apiSlice.endpoints.refreshToken.initiate({}, { forceRefetch: true })
-  );
+
   await store.dispatch(
     // loadUser
     apiSlice.endpoints.loadUser.initiate({}, { forceRefetch: true })
