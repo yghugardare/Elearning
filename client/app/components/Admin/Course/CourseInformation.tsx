@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { styles } from "@/app/styles/style";
-// import { useGetHeroDataQuery } from "@/redux/features/layout/layoutApi";
-import Image from "next/image";
+import { useGetHeroDataQuery } from "@/redux/features/layout/layoutApi";
 import React, { FC, useEffect, useState } from "react";
 
 type Props = {
@@ -18,19 +17,14 @@ const CourseInformation: FC<Props> = ({
   setActive,
 }) => {
   const [dragging, setDragging] = useState(false);
-  //   const { data } = useGetHeroDataQuery("Categories", {});
+  const { data } = useGetHeroDataQuery("Categories", {});
+  const [categories, setCategories] = useState([]);
 
-  // const [categories, setCategories] = useState([]);
-  const categories = [
-    { title: "Frontend", _id: 1 },
-    { title: "Backend", _id: 2 },
-  ];
-
-  //  useEffect(() => {
-  //     if (data) {
-  //       setCategories(data.layout.categories);
-  //     }
-  //   }, [data]);
+  useEffect(() => {
+    if (data) {
+      setCategories(data.layout.categories);
+    }
+  }, [data]);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -181,10 +175,19 @@ const CourseInformation: FC<Props> = ({
                 setCourseInfo({ ...courseInfo, categories: e.target.value })
               }
             >
-              <option value="">Select Category</option>
+              <option
+                className="dark:text-white dark:bg-slate-700 bg-gray-200"
+                value=""
+              >
+                Select Category
+              </option>
               {categories &&
                 categories.map((item: any) => (
-                  <option value={item.title} key={item._id}>
+                  <option
+                    className="dark:text-white dark:bg-black"
+                    value={item.title}
+                    key={item._id}
+                  >
                     {item.title}
                   </option>
                 ))}
@@ -247,7 +250,7 @@ const CourseInformation: FC<Props> = ({
             {courseInfo.thumbnail ? (
               <img
                 src={courseInfo.thumbnail}
-                alt="img"
+                alt=""
                 className="max-h-full w-full object-cover"
               />
             ) : (
@@ -258,7 +261,6 @@ const CourseInformation: FC<Props> = ({
           </label>
         </div>
         <br />
-        {/* button to submit */}
         <div className="w-full flex items-center justify-end">
           <input
             type="submit"
