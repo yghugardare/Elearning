@@ -9,7 +9,9 @@ import ejs from "ejs";
 import sendMail from "../utils/sendMail";
 import NotificationModel from "../models/notification.model";
 import { getAllOrdersService, newOrder } from "../services/order.service";
-
+import { redis } from "../utils/redis";
+require("dotenv").config();
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 // creating order , user will purchase the course
 export const createOrder = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -17,18 +19,18 @@ export const createOrder = CatchAsyncError(
       // get data from client
       const { courseId, payment_info } = req.body as IOrder;
       //  stripe handling
-      //   if (payment_info) {
-      //     if ("id" in payment_info) {
-      //       const paymentIntentId = payment_info.id;
-      //       const paymentIntent = await stripe.paymentIntents.retrieve(
-      //         paymentIntentId
-      //       );
+        if (payment_info) {
+          if ("id" in payment_info) {
+            const paymentIntentId = payment_info.id;
+            const paymentIntent = await stripe.paymentIntents.retrieve(
+              paymentIntentId
+            );
 
-      //       if (paymentIntent.status !== "succeeded") {
-      //         return next(new ErrorHandler("Payment not authorized!", 400));
-      //       }
-      //     }
-      //   }
+            if (paymentIntent.status !== "succeeded") {
+              return next(new ErrorHandler("Payment not authorized!", 400));
+            }
+          }
+        }
       // get the user info who purchased the course
       const user = await userModel.findById(req.user?._id);
       // has he already purchased the course?
@@ -87,7 +89,7 @@ export const createOrder = CatchAsyncError(
       // add course to user
       user?.courses.push(course?._id);
       // save to the cache
-      //   await redis.set(req.user?._id, JSON.stringify(user));
+      await redis.set(req.user?._id, JSON.stringify(user));
       await user?.save();
       // send notification
       await NotificationModel.create({
@@ -115,24 +117,6 @@ export const getAllOrders = CatchAsyncError(
     }
   }
 );
-/*
-import { NextFunction, Request, Response } from "express";
-import { CatchAsyncError } from "../middleware/catchAsyncErrors";
-import ErrorHandler from "../utils/ErrorHandler";
-import { IOrder } from "../models/order.Model";
-import userModel from "../models/user.model";
-import CourseModel, { ICourse } from "../models/course.model";
-import path from "path";
-import ejs from "ejs";
-import sendMail from "../utils/sendMail";
-import NotificationModel from "../models/notification.Model";
---
-import { getAllOrdersService, newOrder } from "../services/order.service";
-import { redis } from "../utils/redis";
-require("dotenv").config();
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
-
-
 //  send stripe publishble key
 export const sendStripePublishableKey = CatchAsyncError(
   async (req: Request, res: Response) => {
@@ -148,7 +132,7 @@ export const newPayment = CatchAsyncError(
     try {
       const myPayment = await stripe.paymentIntents.create({
         amount: req.body.amount,
-        currency: "USD",
+        currency: "usd",
         metadata: {
           company: "E-Learning",
         },
@@ -167,4 +151,3 @@ export const newPayment = CatchAsyncError(
   }
 );
 
-*/
