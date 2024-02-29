@@ -18,6 +18,7 @@ const Hero: FC<Props> = (props) => {
    if(search === ""){
     return
    }else{
+    // redirect seacrh
     router.push(`/courses?title=${search}`);
    }
   }
