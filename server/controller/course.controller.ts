@@ -357,19 +357,19 @@ export const addReview = CatchAsyncError(
         course.ratings = avg / course.reviews.length;
       }
       await course?.save();
-      const notification = {
-        // user: req.user?._id,
-        title: "New Review Received",
-        message: `${req.user?.name} has given a review in ${course?.name}`,
-      };
-      // await redis.set(courseId, JSON.stringify(course), "EX", 604800); // 7days
-
-      // create notification
-      // await NotificationModel.create({
-      //   user: req.user?._id,
+      // const notification = {
+      //   // user: req.user?._id,
       //   title: "New Review Received",
       //   message: `${req.user?.name} has given a review in ${course?.name}`,
-      // });
+      // };
+      await redis.set(courseId, JSON.stringify(course), "EX", 604800); // 7days
+
+      // create notification
+      await NotificationModel.create({
+        user: req.user?._id,
+        title: "New Review Received",
+        message: `${req.user?.name} has given a review in ${course?.name}`,
+      });
       res.status(200).json({
         success: true,
         course,
