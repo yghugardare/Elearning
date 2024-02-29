@@ -73,8 +73,66 @@ const AllInvoices = ({ isDashboard }: Props) => {
         ]),
   ];
 
-  const rows: any = [];
-
+  // const rows: any = [];
+  const rows:any = [
+    {
+      id: "1234567890",
+      userName: "John Doe",
+      userEmail: "johndoe@example.com",
+      title: "JavaScript Crash Course",
+      price: "$20",
+      created_at: "2023-11-21T09:30:00.000Z",
+    },
+    {
+      id: "9876543210",
+      userName: "Jane Doe",
+      userEmail: "janedoe@example.com",
+      title: "Python for Beginners",
+      price: "$30",
+      created_at: "2023-11-22T10:00:00.000Z",
+    },
+    {
+      id: "1234567891",
+      userName: "Alice Smith",
+      userEmail: "alicesmith@example.com",
+      title: "Web Development with React",
+      price: "$40",
+      created_at: "2023-11-23T11:00:00.000Z",
+    },
+    {
+      id: "9876543211",
+      userName: "Bob Smith",
+      userEmail: "bobsmith@example.com",
+      title: "Data Analysis with Pandas",
+      price: "$50",
+      created_at: "2023-11-24T12:00:00.000Z",
+    },
+    {
+      id: "1234567892",
+      userName: "Charlie Brown",
+      userEmail: "charliebrown@example.com",
+      title: "Machine Learning with TensorFlow",
+      price: "$60",
+      created_at: "2023-11-25T13:00:00.000Z",
+    },
+    {
+      id: "9876543212",
+      userName: "Lucy Jones",
+      userEmail: "lucyjones@example.com",
+      title: "App Development with Flutter",
+      price: "$70",
+      created_at: "2023-11-26T14:00:00.000Z",
+    },
+    {
+      id: "1234567893",
+      userName: "Peter Parker",
+      userEmail: "peterparker@example.com",
+      title: "Ethical Hacking with Kali Linux",
+      price: "$80",
+      created_at: "2023-11-27T15:00:00.000Z",
+    },
+  ];
+  
   orderData &&
     orderData.forEach((item: any) => {
       rows.push({
