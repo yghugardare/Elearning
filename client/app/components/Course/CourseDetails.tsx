@@ -44,9 +44,9 @@ const CourseDetails = ({
     user && user?.courses?.find((item: any) => item._id === data._id);
 
   const handleOrder = (e: any) => {
-    console.log(data._id);
-    console.log(typeof data._id);
-    console.log(user?.courses)
+    // console.log(data._id);
+    // console.log(typeof data._id);
+    // console.log(user?.courses)
     if (user) {
       setOpen(true);
     } else {
@@ -232,7 +232,7 @@ const CourseDetails = ({
                 </h4>
               </div>
               <div className="flex items-center">
-                {isPurchased ? (
+                {isPurchased || user?.role === "admin" ? (
                   <Link
                     className={`${styles.button} !w-[180px] my-3 font-Poppins cursor-pointer !bg-[crimson]`}
                     href={`/course-access/${data._id}`}

@@ -13,6 +13,7 @@ type Props = {
 
 const CourseContent = ({ id,user }: Props) => {
   const { data: contentData, isLoading,refetch } = useGetCourseContentQuery(id,{refetchOnMountOrArgChange:true});
+  
   const [open, setOpen] = useState(false);
   const [route, setRoute] = useState('Login')
   const data = contentData?.content;

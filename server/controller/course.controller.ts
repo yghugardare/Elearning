@@ -11,7 +11,7 @@ import path from "path";
 import ejs from "ejs";
 import sendMail from "../utils/sendMail";
 import NotificationModel from "../models/notification.model";
-import axios from "axios"
+import axios from "axios";
 // upload course
 export const uploadCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -45,7 +45,7 @@ export const editCourse = CatchAsyncError(
 
       const courseId = req.params.id;
 
-      const courseData = await CourseModel.findById(courseId) as any;
+      const courseData = (await CourseModel.findById(courseId)) as any;
 
       if (thumbnail && !thumbnail.startsWith("https")) {
         await cloudinary.v2.uploader.destroy(courseData.thumbnail.public_id);
@@ -151,13 +151,18 @@ export const getCourseByUser = CatchAsyncError(
       // get course id from param url
       const courseId = req.params.id;
       // has the user purchased?
-      const courseExists = userCourseList?.find(
-        (course: any) => course._id.toString() === courseId
-      );
-      if (!courseExists) {
-        return next(
-          new ErrorHandler("You are not eligible to access this course", 404)
+      
+      //if he is user then
+      if (req.user?.role === "user") {
+        const courseExists = userCourseList?.find(
+          (course: any) => course._id.toString() === courseId
         );
+        if(!courseExists){
+          return next(
+            new ErrorHandler("You are not eligible to access this course", 404)
+          );
+        }
+       
       }
       // get course
       const course = await CourseModel.findById(courseId);
@@ -457,7 +462,6 @@ export const deleteCourse = CatchAsyncError(
     }
   }
 );
-
 
 // generate video url
 export const generateVideoUrl = CatchAsyncError(

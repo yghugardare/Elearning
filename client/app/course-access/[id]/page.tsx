@@ -14,11 +14,12 @@ const Page = ({ params }: Props) => {
   const { isLoading, error, data, refetch } = useLoadUserQuery(undefined, {});
 
   useEffect(() => {
-    if (data) {
+    if (data && data.user.role === "user") {
       const isPurchased = data.user.courses.find(
         (item: any) => item._id === id
       );
       if (!isPurchased) {
+        
         redirect("/");
       }
     }
