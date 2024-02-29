@@ -27,7 +27,7 @@ const CourseDetails = ({
   setRoute,
   setOpen: openAuthModal,
 }: Props) => {
-  const { data: userData,refetch } = useLoadUserQuery(undefined, {});
+  const { data: userData, refetch } = useLoadUserQuery(undefined, {});
   const [user, setUser] = useState<any>();
   const [open, setOpen] = useState(false);
 
@@ -44,6 +44,9 @@ const CourseDetails = ({
     user && user?.courses?.find((item: any) => item._id === data._id);
 
   const handleOrder = (e: any) => {
+    console.log(data._id);
+    console.log(typeof data._id);
+    console.log(user?.courses)
     if (user) {
       setOpen(true);
     } else {
@@ -276,7 +279,12 @@ const CourseDetails = ({
               <div className="w-full">
                 {stripePromise && clientSecret && (
                   <Elements stripe={stripePromise} options={{ clientSecret }}>
-                    <CheckOutForm setOpen={setOpen} data={data} user={user} refetch={refetch} />
+                    <CheckOutForm
+                      setOpen={setOpen}
+                      data={data}
+                      user={user}
+                      refetch={refetch}
+                    />
                   </Elements>
                 )}
               </div>
