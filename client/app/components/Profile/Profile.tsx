@@ -18,7 +18,7 @@ const Profile: FC<Props> = ({ user }) => {
   const [logout, setLogout] = useState(false);
   const [courses, setCourses] = useState([]);
   const { data, isLoading } = useGetUsersAllCoursesQuery(undefined, {});
-// rtk query will call it
+
   const {} = useLogOutQuery(undefined, {
     skip: !logout ? true : false,
   });
