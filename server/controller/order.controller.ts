@@ -19,18 +19,18 @@ export const createOrder = CatchAsyncError(
       // get data from client
       const { courseId, payment_info } = req.body as IOrder;
       //  stripe handling
-        if (payment_info) {
-          if ("id" in payment_info) {
-            const paymentIntentId = payment_info.id;
-            const paymentIntent = await stripe.paymentIntents.retrieve(
-              paymentIntentId
-            );
+      if (payment_info) {
+        if ("id" in payment_info) {
+          const paymentIntentId = payment_info.id;
+          const paymentIntent = await stripe.paymentIntents.retrieve(
+            paymentIntentId
+          );
 
-            if (paymentIntent.status !== "succeeded") {
-              return next(new ErrorHandler("Payment not authorized!", 400));
-            }
+          if (paymentIntent.status !== "succeeded") {
+            return next(new ErrorHandler("Payment not authorized!", 400));
           }
         }
+      }
       // get the user info who purchased the course
       const user = await userModel.findById(req.user?._id);
       // has he already purchased the course?
@@ -139,7 +139,20 @@ export const newPayment = CatchAsyncError(
         automatic_payment_methods: {
           enabled: true,
         },
+        description: 'My Payment Intent',
+        shipping: {
+          name: "Test Name", // Dummy name
+          address: {
+            line1: "Test Address Line 1",
+            city: "California",
+            country: "US",
+            postal_code: "12345", // Dummy postal code
+          },
+        },
+        
       });
+      
+
 
       res.status(201).json({
         success: true,
@@ -150,4 +163,3 @@ export const newPayment = CatchAsyncError(
     }
   }
 );
-

@@ -24,10 +24,7 @@ const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
     useUpdateNotificationStatusMutation();
   const [notifications, setNotifications] = useState<any>([]);
   const [audio] = useState<any>(
-    typeof window !== "undefined" &&
-      new Audio(
-        "https://res.cloudinary.com/dlnruqp9u/video/upload/v1709730297/Notification_u2yz2e.mp3"
-      )
+    new Audio("/client/app/components/Admin/Notification.mp3")
   );
 
   const playNotificationSound = () => {
@@ -44,7 +41,7 @@ const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
       refetch();
     }
     audio.load();
-  }, [data, isSuccess,audio]);
+  }, [data, isSuccess, audio]);
 
   useEffect(() => {
     socketId.on("newNotification", (data) => {
