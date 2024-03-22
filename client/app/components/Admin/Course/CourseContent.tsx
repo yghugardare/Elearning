@@ -1,4 +1,5 @@
 import { styles } from "@/app/styles/style";
+import Link from "next/link";
 import React, { FC, useState } from "react";
 import { toast } from "react-hot-toast";
 import { AiOutlineDelete, AiOutlinePlusCircle } from "react-icons/ai";
@@ -127,6 +128,13 @@ const CourseContent: FC<Props> = ({
 
   return (
     <div className="w-[80%] m-auto mt-24 p-3">
+      <a
+        href="http://3.145.11.146:8501/"
+        className="p-2 bg-blue-500 rounded-md"
+        target="_blank"
+      >
+        Add video to AI
+      </a>
       <form onSubmit={handleSubmit}>
         {courseContentData?.map((item: any, index: number) => {
           const showSectionInput =
@@ -236,7 +244,9 @@ const CourseContent: FC<Props> = ({
                       />
                     </div>
                     <div className="mb-3">
-                      <label className={styles.label}>Video Length (in minutes)</label>
+                      <label className={styles.label}>
+                        Video Length (in minutes)
+                      </label>
                       <input
                         type="number"
                         placeholder="20"
@@ -249,7 +259,6 @@ const CourseContent: FC<Props> = ({
                         }}
                       />
                     </div>
-                    
 
                     <div className="mb-3">
                       <label className={styles.label}>Video Description</label>

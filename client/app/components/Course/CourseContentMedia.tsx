@@ -21,6 +21,7 @@ import { BiMessage } from "react-icons/bi";
 import { VscVerifiedFilled } from "react-icons/vsc";
 import Ratings from "@/app/utils/Ratings";
 import socketIO from "socket.io-client";
+import Link from "next/link";
 const ENDPOINT = process.env.NEXT_PUBLIC_SOCKET_SERVER_URI || "";
 const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
@@ -221,6 +222,12 @@ const CourseContentMedia = ({
           <AiOutlineArrowLeft className="mr-2" />
           Prev Lesson
         </div>
+        <Link
+          href={`course/ai/${id}`}
+          className="p-2 hover:bg-blue-500 border-2 border-blue-500 rounded-xl hover:border-white font-bold"
+        >
+          ASK AI
+        </Link>
         <div
           className={`${
             styles.button
@@ -414,9 +421,11 @@ const CourseContentMedia = ({
             <div className="w-full">
               {(course?.reviews && [...course.reviews].reverse())?.map(
                 (item: any, index: number) => {
-                  
                   return (
-                    <div className="w-full my-5 dark:text-white text-black" key={index}>
+                    <div
+                      className="w-full my-5 dark:text-white text-black"
+                      key={index}
+                    >
                       <div className="w-full flex">
                         <div>
                           <Image
@@ -440,17 +449,18 @@ const CourseContentMedia = ({
                           </small>
                         </div>
                       </div>
-                      {user.role === "admin" && item.commentReplies.length === 0 && (
-                        <span
-                          className={`${styles.label} !ml-10 cursor-pointer`}
-                          onClick={() => {
-                            setIsReviewReply(true);
-                            setReviewId(item._id);
-                          }}
-                        >
-                          Add Reply
-                        </span>
-                      )}
+                      {user.role === "admin" &&
+                        item.commentReplies.length === 0 && (
+                          <span
+                            className={`${styles.label} !ml-10 cursor-pointer`}
+                            onClick={() => {
+                              setIsReviewReply(true);
+                              setReviewId(item._id);
+                            }}
+                          >
+                            Add Reply
+                          </span>
+                        )}
 
                       {isReviewReply && reviewId === item._id && (
                         <div className="w-full flex relative">
@@ -472,7 +482,10 @@ const CourseContentMedia = ({
                       )}
 
                       {item.commentReplies.map((i: any, index: number) => (
-                        <div className="w-full flex 800px:ml-16 my-5" key={index}>
+                        <div
+                          className="w-full flex 800px:ml-16 my-5"
+                          key={index}
+                        >
                           <div className="w-[50px] h-[50px]">
                             <Image
                               src={
@@ -601,10 +614,13 @@ const CommentItem = ({
           </span>
         </div>
 
-        {replyActive && questionId === item._id &&  (
+        {replyActive && questionId === item._id && (
           <>
             {item.questionReplies.map((item: any) => (
-              <div className="w-full flex 800px:ml-16 my-5 text-black dark:text-white" key={item._id}>
+              <div
+                className="w-full flex 800px:ml-16 my-5 text-black dark:text-white"
+                key={item._id}
+              >
                 <div>
                   <Image
                     src={
