@@ -12,6 +12,7 @@ import ejs from "ejs";
 import sendMail from "../utils/sendMail";
 import NotificationModel from "../models/notification.model";
 import axios from "axios";
+import { AIModel } from "../models/ai.model";
 // upload course
 export const uploadCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -151,18 +152,17 @@ export const getCourseByUser = CatchAsyncError(
       // get course id from param url
       const courseId = req.params.id;
       // has the user purchased?
-      
+
       //if he is user then
       if (req.user?.role === "user") {
         const courseExists = userCourseList?.find(
           (course: any) => course._id.toString() === courseId
         );
-        if(!courseExists){
+        if (!courseExists) {
           return next(
             new ErrorHandler("You are not eligible to access this course", 404)
           );
         }
-       
       }
       // get course
       const course = await CourseModel.findById(courseId);
@@ -480,6 +480,29 @@ export const generateVideoUrl = CatchAsyncError(
         }
       );
       res.json(response.data);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+// function to get transcript from couse
+export const getTranscript = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const { videoName } = req.body;
+      // console.log(videoName);
+      const course = await CourseModel.findById(id);
+      const courseName = course?.name;
+      const ai = await AIModel.findOne({ title: videoName });
+      // console.log(ai, "ai");
+      const transcript = ai?.transcription;
+      res.status(200).json({
+        success: true,
+        transcript,
+        courseName
+      });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }

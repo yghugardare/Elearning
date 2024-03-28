@@ -12,6 +12,7 @@ import {
   getAllCourses,
   getCourseByUser,
   getSingleCourse,
+  getTranscript,
   uploadCourse,
 } from "../controller/course.controller";
 // import { updateAccessToken } from "../controller/user.controller";
@@ -75,3 +76,5 @@ courseRouter.delete(
   deleteCourse
 );
 courseRouter.post("/getVdoCipherOTP", generateVideoUrl);
+
+courseRouter.post("/ai/:id",getTranscript);
