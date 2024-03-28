@@ -486,7 +486,7 @@ export const generateVideoUrl = CatchAsyncError(
   }
 );
 
-// function to get transcript from couse
+// function to get transcript and course name from course
 export const getTranscript = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {

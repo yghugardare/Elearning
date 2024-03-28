@@ -96,9 +96,20 @@ export const coursesApi = apiSlice.injectEndpoints({
       query: ({ comment, courseId, reviewId }: any) => ({
         url: `add-reply`,
         body: {
-          comment, courseId, reviewId
+          comment,
+          courseId,
+          reviewId,
         },
         method: "PUT",
+        credentials: "include" as const,
+      }),
+    }),
+    getTranscript: builder.mutation({
+      // Changed to builder.mutation
+      query: ({ id, videoName }) => ({
+        url: `ai/${id}`, // Adjust URL if needed
+        method: "POST",
+        body: { videoName },
         credentials: "include" as const,
       }),
     }),
@@ -116,5 +127,6 @@ export const {
   useAddNewQuestionMutation,
   useAddAnswerInQuestionMutation,
   useAddReviewInCourseMutation,
-  useAddReplyInReviewMutation
+  useAddReplyInReviewMutation,
+  useGetTranscriptMutation
 } = coursesApi;
