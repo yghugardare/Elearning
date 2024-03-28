@@ -223,7 +223,7 @@ const CourseContentMedia = ({
           Prev Lesson
         </div>
         <Link
-          href={`course/ai/${id}`}
+          href={`ai/${id}`}
           className="p-2 hover:bg-blue-500 border-2 border-blue-500 rounded-xl hover:border-white font-bold"
         >
           ASK AI
