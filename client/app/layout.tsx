@@ -36,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning={true}>
       {/*  background color of an element to transparent */}
       <body
         className={`${poppins.variable} ${josefin.variable} !bg-white bg-no-repeat dark:bg-gradient-to-b dark:from-gray-900 dark:to-black duration-300`}
@@ -44,9 +44,7 @@ export default function RootLayout({
         <Providers>
           <SessionProvider>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              <Custom>
-              {children}
-              </Custom>
+              <Custom>{children}</Custom>
               <Toaster position="top-center" reverseOrder={false} />
             </ThemeProvider>
           </SessionProvider>
@@ -62,14 +60,7 @@ const Custom: FC<{ children: React.ReactNode }> = ({ children }) => {
     socketId.on("connection", () => {});
   }, []);
 
-  return (
-    <>
-    {
-      isLoading? <Loader/> : <div>{children}</div>
-    }
-    
-    </>
-  )
+  return <>{isLoading ? <Loader /> : <div>{children}</div>}</>;
 
   // <div>{isLoading ? <Loader /> : <div>{children} </div>}</div>;
 };
