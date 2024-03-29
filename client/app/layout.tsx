@@ -13,7 +13,7 @@ import socketIO from "socket.io-client";
 const ENDPOINT = process.env.NEXT_PUBLIC_SOCKET_SERVER_URI || "";
 const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
-const inter = Inter({ subsets: ["latin"] });
+// const inter = Inter({ subsets: ["latin"] });
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -62,5 +62,14 @@ const Custom: FC<{ children: React.ReactNode }> = ({ children }) => {
     socketId.on("connection", () => {});
   }, []);
 
-  return <div>{isLoading ? <Loader /> : <div>{children} </div>}</div>;
+  return (
+    <>
+    {
+      isLoading? <Loader/> : <div>{children}</div>
+    }
+    
+    </>
+  )
+
+  // <div>{isLoading ? <Loader /> : <div>{children} </div>}</div>;
 };
